@@ -14,19 +14,11 @@ export async function validateToken(req, res, next) {
 
         const user = await db.collection("users").findOne({ _id: session.userId });
         if (!user) {return res.status(401);}
-
+        
         res.locals.user = user;
         next();
     } catch (error) {
         console.log(error);
         res.status(500).send(error);
     }
-}
-
-export async function validateLogin(req, res, next) {
-
-}
-
-export async function validateSignUp(req, res, next) {
-    
 }
