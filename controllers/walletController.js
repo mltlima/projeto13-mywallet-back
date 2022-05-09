@@ -11,7 +11,11 @@ export async function getUser(req, res) {
         const wallet = await db.collection('wallet').find({ id: user._id }).toArray()
         let value = 0;
         wallet.forEach(element => {
-            value += parseFloat(element.value);
+            if(element.type === 'input'){
+                value += parseFloat(element.value);
+            } else {
+                value -= parseFloat(element.value);
+            }
         });
         res.send({value, ledger: wallet});
     } catch (error) {
@@ -21,12 +25,15 @@ export async function getUser(req, res) {
 }
 
 export async function postLedger(req, res) {
-    /*
+    
     const messageSchema = joi.object({
-
+        value: joi.number().required(),
+        description: joi.string().required(),
+        type: joi.alternatives().valid('input', 'output').required()
     })
-    */
-
+    
+    const { error } = messageSchema.validate(req.body);
+    if (error) {return res.sendStatus(422);}
 
     try {
         const { user } = res.locals;
